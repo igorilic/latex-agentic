@@ -133,6 +133,16 @@ process.stdout.write(JSON.stringify(obj));
   return 0
 }
 
+# join_list <item>... -> prints the items joined with ", ".
+# (A plain `IFS=', '` join only uses the first IFS character, yielding "a,b".)
+join_list() {
+  local out="" item
+  for item in "$@"; do
+    out="${out:+${out}, }${item}"
+  done
+  printf '%s' "$out"
+}
+
 # find_project_config -> prints the path to .latex-agentic.json if it exists in
 # the current working directory (non-recursive), otherwise prints nothing.
 find_project_config() {

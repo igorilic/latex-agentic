@@ -10,7 +10,7 @@
       "name": "latex-agentic",
       "source": "./",
       "description": "Agents, skills, hooks and an Overleaf MCP server for XeLaTeX document development.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "keywords": [
         "latex",
         "xelatex",

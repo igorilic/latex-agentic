@@ -85,10 +85,10 @@ for tool in xelatex latexmk chktex latexindent biber texcount; do
   fi
 done
 present_str="none"
-[ "${#present[@]}" -gt 0 ] && present_str="$(IFS=', '; echo "${present[*]}")"
+[ "${#present[@]}" -gt 0 ] && present_str="$(join_list "${present[@]}")"
 toolchain_line="Toolchain present: ${present_str}"
 if [ "${#missing[@]}" -gt 0 ]; then
-  missing_str="$(IFS=', '; echo "${missing[*]}")"
+  missing_str="$(join_list "${missing[@]}")"
   toolchain_line="${toolchain_line}; missing: ${missing_str}"
 fi
 
@@ -97,7 +97,7 @@ overleaf_transports=()
 [ -n "${OVERLEAF_GIT_TOKEN:-}" ] && overleaf_transports+=("git bridge")
 [ -n "${OVERLEAF_SESSION_COOKIE:-}" ] && overleaf_transports+=("web API")
 if [ "${#overleaf_transports[@]}" -gt 0 ]; then
-  overleaf_line="Overleaf transports configured: $(IFS=', '; echo "${overleaf_transports[*]}")"
+  overleaf_line="Overleaf transports configured: $(join_list "${overleaf_transports[@]}")"
 else
   overleaf_line="Overleaf transports configured: none (set OVERLEAF_GIT_TOKEN or OVERLEAF_SESSION_COOKIE)"
 fi

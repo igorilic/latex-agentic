@@ -1,7 +1,7 @@
 {
   "name": "latex-agentic",
   "displayName": "LaTeX Agentic",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Agents, skills, hooks and an Overleaf MCP server for XeLaTeX document development.",
   "author": {
     "name": "Igor Ilic",
@@ -20,7 +20,6 @@
     "bibliography",
     "i18n"
   ],
-  "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json",
   "userConfig": {
     "overleaf_base_url": {
