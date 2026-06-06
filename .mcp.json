@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "overleaf": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/overleaf/server.mjs"],
+      "env": {
+        "OVERLEAF_CFG_BASE_URL": "${user_config.overleaf_base_url}",
+        "OVERLEAF_CFG_GIT_TOKEN": "${user_config.overleaf_git_token}",
+        "OVERLEAF_CFG_SESSION_COOKIE": "${user_config.overleaf_session_cookie}"
+      }
+    }
+  }
+}

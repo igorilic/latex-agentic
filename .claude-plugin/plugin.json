@@ -1,0 +1,44 @@
+{
+  "name": "latex-agentic",
+  "displayName": "LaTeX Agentic",
+  "version": "0.1.0",
+  "description": "Agents, skills, hooks and an Overleaf MCP server for XeLaTeX document development.",
+  "author": {
+    "name": "Igor Ilic",
+    "email": "ilicigor@gmail.com",
+    "url": "https://github.com/igorilic"
+  },
+  "homepage": "https://github.com/igorilic/latex-agentic",
+  "repository": "https://github.com/igorilic/latex-agentic",
+  "license": "MIT",
+  "keywords": [
+    "latex",
+    "xelatex",
+    "overleaf",
+    "writing",
+    "resume",
+    "bibliography",
+    "i18n"
+  ],
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json",
+  "userConfig": {
+    "overleaf_base_url": {
+      "type": "string",
+      "title": "Overleaf base URL",
+      "description": "Base URL of the Overleaf instance. Defaults to https://www.overleaf.com; set this to point at a self-hosted Community or Server Pro instance."
+    },
+    "overleaf_git_token": {
+      "type": "string",
+      "sensitive": true,
+      "title": "Overleaf Git token",
+      "description": "Git authentication token from Overleaf Account Settings -> Git Integration (requires Overleaf premium or a self-hosted instance)."
+    },
+    "overleaf_session_cookie": {
+      "type": "string",
+      "sensitive": true,
+      "title": "Overleaf session cookie",
+      "description": "Value of the overleaf_session2 browser cookie. Enables the web transport for listing, creating, deleting and compiling projects."
+    }
+  }
+}

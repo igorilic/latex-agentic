@@ -1,0 +1,146 @@
+% =============================================================================
+%  latex-agentic — article template
+%  Engine: XeLaTeX ONLY (compile with `latexmk` or `make pdf`).
+%
+%  Why XeLaTeX: native UTF-8 input and system/OpenType fonts via fontspec.
+%  Do NOT add \usepackage{inputenc} or \usepackage{fontenc} — they are
+%  pdfLaTeX-era packages and will fight fontspec. Just type UTF-8 directly.
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+
+% --- Fonts & encoding (XeLaTeX) --------------------------------------------
+% fontspec must load before most font-related packages. We keep the default
+% Latin Modern fonts (shipped with TeX Live) so this template compiles
+% anywhere; swap in any installed font with \setmainfont if you like.
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+
+% --- Language ---------------------------------------------------------------
+% polyglossia is the XeLaTeX-native replacement for babel.
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+
+% --- Typography -------------------------------------------------------------
+\usepackage{microtype}        % subtle protrusion/expansion — better grey balance
+\usepackage[autostyle=true]{csquotes}  % context-aware quotation marks
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{setspace}
+\setstretch{1.06}
+
+% --- Tables, figures, math --------------------------------------------------
+\usepackage{booktabs}         % proper rules: \toprule \midrule \bottomrule
+\usepackage{graphicx}
+\usepackage{mwe}              % ships example-image* placeholder graphics
+\usepackage{amsmath,amssymb}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\usepackage{xcolor}           % needed for the blue!55!black link colour below
+
+% --- Bibliography (biblatex + biber) ----------------------------------------
+% authoryear style; bibliographic database lives in refs.bib.
+\usepackage[backend=biber,style=authoryear,sorting=nyt,maxbibnames=10]{biblatex}
+\addbibresource{refs.bib}
+
+% --- Cross-references -------------------------------------------------------
+% hyperref must be loaded LAST (after almost everything), and cleveref must be
+% loaded AFTER hyperref. This ordering avoids the classic "hyperref redefines
+% \ref" breakage. cleveref gives \cref / \Cref which print "Section 2",
+% "Figure 1", etc. automatically.
+\usepackage[
+  unicode=true,
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue!55!black,
+  pdftitle={A Concise Study of Reproducible Typesetting},
+  pdfauthor={Ada A. Researcher},
+  pdfsubject={Sample XeLaTeX article from latex-agentic},
+  pdfkeywords={LaTeX, XeLaTeX, reproducibility, typesetting}
+]{hyperref}
+\usepackage{cleveref}
+
+% --- Metadata ---------------------------------------------------------------
+% The new-article skill replaces these three sample values (the title, the
+% author line, and the date) with the resolved title/author/date. The sample
+% strings below are chosen to be unique so an exact-match edit is unambiguous;
+% if you are editing by hand, just overwrite them.
+\title{A Concise Study of Reproducible Typesetting}
+\author{Ada A. Researcher\\\small Department of Document Engineering, Example University}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent This template demonstrates a complete, genuinely good-looking
+XeLaTeX article: a structured body, a \texttt{booktabs} table, a figure, a
+numbered equation referenced with \texttt{cleveref}, and an
+\texttt{authoryear} bibliography driven by \texttt{biber}. The sample text
+below is filler intended to be replaced; the surrounding scaffolding is meant
+to be kept.
+\end{abstract}
+
+% ---------------------------------------------------------------------------
+\section{Introduction}\label{sec:intro}
+Reproducible typesetting matters whenever a document must be rebuilt months
+later from source. Early discussions of the topic framed it as a question of
+toolchain stability~\autocite{lamport1994latex}, while later work emphasised
+the role of consistent fonts and encodings~\autocite{robertson2023fontspec}.
+This article walks through the pieces a working author actually needs:
+sectioning, floats, mathematics, and citations. \Cref{sec:results} presents a
+small table and figure; \cref{sec:math} states the one equation we rely on.
+
+% ---------------------------------------------------------------------------
+\section{Results}\label{sec:results}
+\Cref{tab:summary} reports illustrative measurements, and \cref{fig:overview}
+sketches the corresponding layout. Both are placeholders: replace the numbers
+and the graphic with your own.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Illustrative build timings across three engines (sample data).}%
+  \label{tab:summary}
+  \begin{tabular}{lrr}
+    \toprule
+    Engine    & Cold build (s) & Warm build (s) \\
+    \midrule
+    pdfLaTeX  & 4.1            & 1.2            \\
+    XeLaTeX   & 5.3            & 1.6            \\
+    LuaLaTeX  & 6.0            & 1.8            \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{example-image}
+  \caption{Placeholder graphic supplied by the \texttt{mwe} package. Swap in
+  your own figure with \texttt{\textbackslash{}includegraphics}.}%
+  \label{fig:overview}
+\end{figure}
+
+% ---------------------------------------------------------------------------
+\section{A Touch of Mathematics}\label{sec:math}
+For completeness we include one numbered equation. The Gaussian integral,
+shown in \cref{eq:gauss}, is a convenient sanity check that math mode and
+cross-referencing both work:
+\begin{equation}
+  \label{eq:gauss}
+  \int_{-\infty}^{\infty} e^{-x^{2}}\,\mathrm{d}x = \sqrt{\pi}.
+\end{equation}
+The reader is invited to confirm \cref{eq:gauss} numerically.
+
+% ---------------------------------------------------------------------------
+\section{Conclusion}\label{sec:conclusion}
+We have assembled the minimum viable article: structure, a float pair, a
+referenced equation, and a working bibliography. The same skeleton scales to a
+full paper~\autocite{knuth1986texbook}; replace the prose, keep the
+preamble. The micro-typographic refinements enabled by \texttt{microtype}
+have a measurable perceptual effect~\autocite{nguyen2022microtype}. For a
+survey of online tooling, see~\autocite{overleaf2024guide}.
+
+% ---------------------------------------------------------------------------
+\printbibliography[heading=bibintoc,title={References}]
+
+\end{document}

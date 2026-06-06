@@ -1,0 +1,38 @@
+# LaTeX build artifacts (for anyone compiling templates in-repo)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdv
+
+# OS noise
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# Local Claude Code session state (never ship with the plugin)
+.claude/settings.local.json
+
+# Node (MCP server is zero-dep, but just in case)
+node_modules/
+
+# Local secrets — never commit Overleaf credentials
+.env
+.env.*

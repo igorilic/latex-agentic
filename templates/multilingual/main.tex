@@ -1,0 +1,237 @@
+% =============================================================================
+%  latex-agentic — multilingual / internationalization demo
+%  Engine: XeLaTeX ONLY (compile with `latexmk` or `make pdf`).
+%
+%  One compilable document that shows SERIOUS i18n: Latin, Cyrillic, Greek,
+%  right-to-left Arabic, and Chinese (CJK) — each with the right font and the
+%  right language environment. It is written to DEGRADE GRACEFULLY: if a script
+%  font is missing on your machine, that section prints a short note instead of
+%  failing the build. See docs/INTERNATIONALIZATION.md for the full theory.
+%
+%  THE GOLDEN RULES OF XeLaTeX i18n (each illustrated below):
+%    * No font covers every script. Assign a font PER script.
+%    * Latin Modern (the LaTeX default) has NO Cyrillic and NO Greek — that is
+%      why the Latin/Cyrillic/Greek font chain below matters.
+%    * Arabic and Hebrew are right-to-left: polyglossia + the bidi engine
+%      reorder the text. Load order matters (polyglossia pulls in bidi LAST).
+%    * CJK needs xeCJK for correct line-breaking (no spaces between words).
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\usepackage{geometry}\geometry{margin=2.5cm}
+
+% --- fontspec + polyglossia (XeLaTeX-native i18n) ---------------------------
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+
+\usepackage{polyglossia}
+\setmainlanguage{english}
+% Declare every OTHER language we use. \setotherlanguage gives us an
+% environment (\begin{german}…) and the matching hyphenation patterns.
+\setotherlanguage{german}
+\setotherlanguage{french}
+\setotherlanguage{russian}
+\setotherlanguage{greek}
+% Serbian is special: ONE language, TWO scripts. polyglossia selects the
+% script with the [script=…] option (NOT variant=, which is the ekavian/
+% ijekavian dialect switch) — see the Serbian section below.
+\setotherlanguage[script=cyrillic]{serbian}
+% Arabic is right-to-left; polyglossia loads the bidi package to handle it.
+\setotherlanguage{arabic}
+
+% ---------------------------------------------------------------------------
+%  FONT STRATEGY (the heart of this template)
+%
+%  Latin / Cyrillic / Greek main font — try, in order:
+%    1. "CMU Serif"      (Computer Modern Unicode; full Latin+Cyrillic+Greek)
+%    2. "FreeSerif"      (GNU FreeFont; ships with TeX Live; very wide coverage)
+%    3. Latin Modern Roman (ALWAYS present, but NO Cyrillic/Greek — last resort)
+%
+%  We test the family name first, then the TeX Live *filename* (which always
+%  resolves inside the TeX tree even when fontconfig has not indexed it).
+% ---------------------------------------------------------------------------
+\IfFontExistsTF{CMU Serif}{%
+  \setmainfont{CMU Serif}%
+}{\IfFontExistsTF{cmunrm.otf}{%
+  \setmainfont{CMU Serif}[%
+    Extension=.otf, UprightFont=cmunrm, BoldFont=cmunbx,
+    ItalicFont=cmunti, BoldItalicFont=cmunbi]%
+}{\IfFontExistsTF{FreeSerif}{%
+  \setmainfont{FreeSerif}%
+}{\IfFontExistsTF{FreeSerif.otf}{%
+  \setmainfont{FreeSerif}[%
+    Extension=.otf, UprightFont=FreeSerif, BoldFont=FreeSerifBold,
+    ItalicFont=FreeSerifItalic, BoldItalicFont=FreeSerifBoldItalic]%
+}{%
+  % LAST RESORT — note: Latin Modern lacks Cyrillic and Greek glyphs, so the
+  % Russian/Greek/Serbian-Cyrillic sections may show "missing glyph" boxes.
+  \setmainfont{Latin Modern Roman}%
+}}}}
+
+% Greek-aware font: CMU Serif and FreeSerif both cover Greek, so we reuse the
+% main font for Greek. (polyglossia will use \greekfont if defined; if not, it
+% falls back to the main font, which here already has Greek.)
+
+% ---------------------------------------------------------------------------
+%  Arabic font chain. Arabic NEEDS shaping (contextual joining), so the font
+%  must be a real Arabic face. Try: Amiri → Scheherazade New → Noto Naskh
+%  Arabic. If none is found we set a flag and SKIP the Arabic body (the doc
+%  still compiles) — the section prints a short note instead.
+% ---------------------------------------------------------------------------
+\newif\ifhasarabic
+\IfFontExistsTF{Amiri}{%
+  \newfontfamily\arabicfont[Script=Arabic]{Amiri}\hasarabictrue
+}{\IfFontExistsTF{Amiri-Regular.ttf}{%
+  \newfontfamily\arabicfont[Script=Arabic]{Amiri-Regular.ttf}\hasarabictrue
+}{\IfFontExistsTF{Scheherazade New}{%
+  \newfontfamily\arabicfont[Script=Arabic]{Scheherazade New}\hasarabictrue
+}{\IfFontExistsTF{Noto Naskh Arabic}{%
+  \newfontfamily\arabicfont[Script=Arabic]{Noto Naskh Arabic}\hasarabictrue
+}{%
+  \hasarabicfalse
+}}}}
+
+% ---------------------------------------------------------------------------
+%  Chinese (CJK) via xeCJK. Try FandolSong (ships with TeX Live) → Noto Serif
+%  CJK SC → Songti SC. Same skip-with-note fallback if nothing is available.
+%  IMPORTANT: load xeCJK and set the CJK font only when we have one, otherwise
+%  \setCJKmainfont errors out.
+% ---------------------------------------------------------------------------
+\newif\ifhascjk
+\IfFontExistsTF{FandolSong-Regular.otf}{\hascjktrue}{%
+  \IfFontExistsTF{Noto Serif CJK SC}{\hascjktrue}{%
+    \IfFontExistsTF{Songti SC}{\hascjktrue}{\hascjkfalse}}}
+
+\ifhascjk
+  \usepackage{xeCJK}
+  \IfFontExistsTF{FandolSong-Regular.otf}{%
+    % FandolSong-Regular has no built-in bold shape; pair it with the
+    % matching bold file so \textbf works in CJK text.
+    \setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]%
+  }{\IfFontExistsTF{Noto Serif CJK SC}{%
+    \setCJKmainfont{Noto Serif CJK SC}%
+  }{%
+    \setCJKmainfont{Songti SC}%
+  }}
+\fi
+
+% --- Typography & links (hyperref last) -------------------------------------
+\usepackage{microtype}
+\usepackage[autostyle=true]{csquotes}
+\usepackage{xcolor}
+\usepackage[
+  unicode=true, hidelinks,
+  pdftitle={Multilingual XeLaTeX demo},
+  pdfauthor={latex-agentic}
+]{hyperref}
+
+\begin{document}
+
+% --- Title block ------------------------------------------------------------
+% NOTE (a real i18n trap): the standard \maketitle does not coexist with
+% hyperref once a right-to-left language (here Arabic, via bidi) is active —
+% the combination overflows TeX's input stack at \end{document} on this and
+% similar TeX Live versions. We therefore typeset the title by hand. It looks
+% the same, is easier to restyle, and sidesteps the bug entirely.
+\begin{center}
+  {\LARGE\bfseries A Multilingual XeLaTeX Document}\\[4pt]
+  {\large latex-agentic}\\[2pt]
+  {\today}
+\end{center}
+\vspace{1.2em}
+
+\noindent This document is typeset with \textbf{XeLaTeX} and
+\texttt{polyglossia}. Each section below is written in a different language and
+script. The source is plain UTF-8 — the non-Latin text is typed directly, with
+no escape codes. If a required font is not installed, the affected section
+prints a short note rather than breaking the build.
+
+% ===========================================================================
+\section*{English (Latin, default)}
+The quick brown fox jumps over the lazy dog. This paragraph uses the document's
+default language and main serif font. Everything that follows switches language
+and, where necessary, font.
+
+% ===========================================================================
+\section*{German (Latin)}
+\begin{german}
+Falsches Üben von Xylophonmusik quält jeden größeren Zwerg. Die deutsche
+Sprache nutzt die Umlaute ä, ö, ü und das Eszett ß. Polyglossia lädt zudem die
+korrekten Trennmuster für den Blocksatz.
+\end{german}
+
+% ===========================================================================
+\section*{French (Latin)}
+\begin{french}
+Voix ambiguë d'un cœur qui, au zéphyr, préfère les jattes de kiwis. Le français
+emploie de nombreux accents — é, è, ê, ë, à, ç — et des guillemets « à la
+française ». La typographie française insère une espace fine avant ; : ? et !
+\end{french}
+
+% ===========================================================================
+\section*{Serbian — dual script (Latin and Cyrillic)}
+% Serbian is the textbook "one language, two scripts" case. We declared
+% \setotherlanguage[script=cyrillic]{serbian} in the preamble; the [script=…]
+% option switches scripts per block (variant= would switch the ekavian/
+% ijekavian dialect instead). Below: first Latin, then Cyrillic.
+\textbf{Latinica:}
+\begin{serbian}[script=latin]
+Đačko društvo čeka prijatan, žustar i živahan ćuk. Srpski se piše dvama
+ravnopravnim pismima; ovo je latinica.
+\end{serbian}
+
+\smallskip\noindent\textbf{Ћирилица:}
+\begin{serbian}[script=cyrillic]
+Ђачко друштво чека пријатан, жустар и живахан ћук. Ово је исти текст исписан
+ћирилицом — потпуно равноправним српским писмом.
+\end{serbian}
+
+% ===========================================================================
+\section*{Russian (Cyrillic)}
+\begin{russian}
+Съешь же ещё этих мягких французских булок, да выпей чаю. Это известная
+русская панграмма. Кириллический текст требует шрифта с поддержкой кириллицы —
+Latin Modern такой поддержки не имеет.
+\end{russian}
+
+% ===========================================================================
+\section*{Greek}
+\begin{greek}
+Ξεσκεπάζω την ψυχοφθόρα βδελυγμία. Η ελληνική γλώσσα χρησιμοποιεί το δικό της
+αλφάβητο, με τόνους και διαλυτικά. Η γραμματοσειρά πρέπει να καλύπτει το
+ελληνικό σύστημα γραφής.
+\end{greek}
+
+% ===========================================================================
+\section*{Arabic (right-to-left)}
+% Arabic flips the paragraph direction. The environment that switches BOTH the
+% font and the base direction is the CAPITALISED language name —
+% \begin{Arabic}…\end{Arabic}. (The lower-case \arabic / \textarabic forms are
+% the *inline* commands.) Using the wrong form for RTL is a classic trap: the
+% text silently falls back to the Latin main font — which has no Arabic glyphs
+% — and the run can blow the input stack. We only enter the environment if an
+% Arabic font was found (see the \ifhasarabic flag in the preamble).
+\ifhasarabic
+\begin{Arabic}
+مرحبًا بالعالم. هذا نصٌّ تجريبيٌّ مكتوبٌ باللغة العربية، ويُكتب من اليمين إلى
+اليسار. لاحظ كيف تتشابك الحروف وتتغيّر أشكالها حسب موضعها في الكلمة.
+\end{Arabic}
+\else
+\textit{Arabic section skipped: no Arabic font found. Install one of
+``Amiri'', ``Scheherazade New'', or ``Noto Naskh Arabic'' (e.g.
+\texttt{tlmgr install amiri}) and rebuild.}
+\fi
+
+% ===========================================================================
+\section*{Chinese (CJK)}
+% CJK has no spaces between words, so line-breaking is handled glyph-by-glyph
+% — that is xeCJK's job. We only typeset this if a CJK font was found.
+\ifhascjk
+你好，世界。这是一段用中文书写的示例文字。中文不使用空格来分隔词语，
+因此换行需要 xeCJK 在字符之间进行处理。汉字与拉丁字母可以混排。
+\else
+\textit{Chinese section skipped: no CJK font found. Install one of
+``FandolSong'', ``Noto Serif CJK SC'', or ``Songti SC'' (e.g.
+\texttt{tlmgr install fandol}) and rebuild.}
+\fi
+
+\end{document}

@@ -1,0 +1,14 @@
+{
+  "main": "resume.tex",
+  "engine": "xelatex",
+  "bib": {
+    "backend": "biber",
+    "files": [],
+    "style": "authoryear"
+  },
+  "languages": ["english"],
+  "overleaf": {
+    "projectId": "",
+    "transport": "git"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "main": "main.tex",
+  "engine": "xelatex",
+  "bib": {
+    "backend": "biber",
+    "files": ["refs.bib"],
+    "style": "authoryear"
+  },
+  "languages": ["english"],
+  "overleaf": {
+    "projectId": "",
+    "transport": "git"
+  }
+}
